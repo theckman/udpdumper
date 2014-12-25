@@ -1,12 +1,17 @@
+// Copyright 2014 Tim Heckman. All rights reserved.
+// Use of this source code is governed by the BSD 3-Clause
+// license that can be found in the LICENSE file.
+
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"net"
 	"os"
 	"strings"
 
 	"github.com/jessevdk/go-flags"
-	"github.com/theckman/udpdumper/dumper"
 )
 
 type args struct {
@@ -32,6 +37,45 @@ func (a *args) parse() {
 	}
 }
 
+func NewUDPListener(host string, port uint16) *net.UDPConn {
+	addr, err := net.ResolveUDPAddr("udp", fmt.Sprintf("%v:%d", host, port))
+
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	l, err := net.ListenUDP("udp", addr)
+
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	return l
+}
+
+func Printer(listener *net.UDPConn, out chan<- []byte) {
+	defer func() {
+		_ = recover()
+	}()
+
+	defer close(out)
+
+	for {
+		b := make([]byte, 8192)
+
+		_, err := listener.Read(b)
+
+		if err != nil {
+			close(out)
+			break
+		}
+
+		out <- bytes.Trim(b, "\x00")
+	}
+}
+
 func main() {
 	var (
 		a  = &args{}
@@ -40,9 +84,9 @@ func main() {
 
 	a.parse()
 
-	l := udpdumper.NewUDPListener(a.Host, a.Port)
+	l := NewUDPListener(a.Host, a.Port)
 
-	go udpdumper.Printer(l, ch)
+	go Printer(l, ch)
 
 	for v := range ch {
 		fmt.Printf("%v<EOF>\n", string(v))
