@@ -86,6 +86,9 @@ func main() {
 
 	l := NewUDPListener(a.Host, a.Port)
 
+	fmt.Fprintf(os.Stderr, ">> Starting UDPDumper...\n")
+	fmt.Fprintf(os.Stderr, ">> Listening at %v:%d...\n\n", a.Host, a.Port)
+
 	go Printer(l, ch)
 
 	for v := range ch {
