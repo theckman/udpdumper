@@ -1,6 +1,5 @@
 # UDPDumper
 [![TravisCI Build Status](https://img.shields.io/travis/theckman/udpdumper/master.svg?style=flat)](https://travis-ci.org/theckman/udpdumper)
-[![GoDoc](https://img.shields.io/badge/udpdumper-GoDoc-blue.svg?style=flat)](https://godoc.org/github.com/theckman/udpdumper/dumper)
 
 UDPDumper is a small tool for printing all UDP communications to a single port.
 This is meant for testing thing like statsd emissions, or anything else that

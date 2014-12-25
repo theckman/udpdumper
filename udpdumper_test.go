@@ -1,10 +1,13 @@
-package udpdumper_test
+// Copyright 2014 Tim Heckman. All rights reserved.
+// Use of this source code is governed by the BSD 3-Clause
+// license that can be found in the LICENSE file.
+
+package main
 
 import (
 	"net"
 	"testing"
 
-	"github.com/theckman/udpdumper/dumper"
 	. "gopkg.in/check.v1"
 )
 
@@ -25,7 +28,7 @@ var _ = Suite(&TestSuite{})
 
 func (s *TestSuite) SetUpSuite(c *C) {
 	s.out = make(chan []byte)
-	s.listener = udpdumper.NewUDPListener(HOST, PORT)
+	s.listener = NewUDPListener(HOST, PORT)
 
 	w, err := net.DialUDP("udp", nil, &net.UDPAddr{IP: net.ParseIP(HOST), Port: int(PORT)})
 
@@ -40,13 +43,13 @@ func (s *TestSuite) TearDownSuite(c *C) {
 }
 
 func (s *TestSuite) TestNewUDPListener(c *C) {
-	l := udpdumper.NewUDPListener("127.0.0.1", 8130)
+	l := NewUDPListener("127.0.0.1", 8130)
 
 	c.Assert(l.LocalAddr().String(), Equals, "127.0.0.1:8130")
 }
 
 func (s *TestSuite) TestPrinter(c *C) {
-	go udpdumper.Printer(s.listener, s.out)
+	go Printer(s.listener, s.out)
 
 	s.writer.Write([]byte("hello there! -- 1234\n"))
 
