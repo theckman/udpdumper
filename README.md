@@ -15,10 +15,14 @@ go install github.com/theckman/udpdumper
 ```
 # host defaults to 127.0.0.1 and port defaults to 8125
 udpdumper --host 127.0.0.2 --port 8130
+>> Starting UDPDumper...
+>> Listening at 127.0.0.2:8130...
+
 random UDP traffic<EOF>
 more random UDP traffic<EOF>
-
 ```
+Each complete UDP message ends with `<EOF>` to indicate its true end. Nothing
+is stripped, so newline characters are printed and result in actual new lines.
 
 ## License
 UDPDumper is released under the BSD 3-Clause License. See the `LICENSE` file for
